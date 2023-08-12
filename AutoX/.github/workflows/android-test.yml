@@ -1,0 +1,27 @@
+name: Android CI test
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - "README.md"
+      - "README_en.md"
+  pull_request:
+    paths-ignore:
+      - "README.md"
+      - "README_en.md"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: set up kotlin
+        uses: fwilhe2/setup-kotlin@main
+        with:
+          version: 1.6.20
+      - name: Build with Gradle
+        run: chmod 777 ./gradlew && ./gradlew :inrt:assemble &&  ./gradlew inrt:cp2APP && ./gradlew :app:assembleRelease
