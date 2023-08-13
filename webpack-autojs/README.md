@@ -1,3 +1,11 @@
+# ONE备注
+
+- 先npm run build编译
+- 然后保存dist/xxx项目到手机
+- 在手机上面执行脚本
+- 在运行npm run start可实时编译运行
+
+
 # 概述
 本项目是在 https://github.com/snailuncle/webpack-autojs 项目上魔改得来，
 

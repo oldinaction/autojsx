@@ -1,0 +1,10 @@
+{
+    "name": "闲鱼签到",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "cn.aezo.autojs.demo.xianyuqiandao",
+    "versionName": "1.7.0",
+    "versionCode": 17
+}
