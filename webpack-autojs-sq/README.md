@@ -1,5 +1,6 @@
 # SQ备注
 
+- [AutoX文档](http://doc.autoxjs.com/)
 - 安装
 
 ```bash
