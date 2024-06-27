@@ -1,0 +1,10 @@
+{
+    "name": "闲鱼自动发货",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "cn.aezo.autojs.demo.xianyufahuo",
+    "versionName": "1.7.0",
+    "versionCode": 17
+}

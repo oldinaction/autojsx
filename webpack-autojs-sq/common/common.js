@@ -62,7 +62,16 @@ common.consoleWrap = function(title, fn, catchError) {
   }
   log('<--结束' + title);
 }
-
+// 看标记的中心位置(标记长宽大约为60)
+common.debugXy = function(x, y) {
+  var w = floaty.rawWindow(
+    <frame gravity="center" bg="#77ff0000">
+      <text id="text">XX</text>
+    </frame>
+  );
+  w.setPosition(x - 30, y - 110);
+  console.log('debugXy:', x, y)
+}
 
 // ========== APP: http://doc.autoxjs.com/#/app ==========
 common.openApp = function (name) {
@@ -102,13 +111,19 @@ common.parents = function(uiObj, num) {
   }
   return this.obj;
 }
-// 有些地方通过click()无效，只能通过xy坐标进行点击
-common.clickXy = function(uiObj, clickXy) {
+// 有些地方通过click()无效，只能通过xy坐标进行点击，有时候需要定义一个点击延迟可通过press实现
+common.clickXy = function(uiObj, clickXy, pressDuration) {
   if (!uiObj) {
     return
   }
   if (clickXy !== false) {
     var rect = uiObj.bounds();
+    if (pressDuration === true) {
+      pressDuration = 200
+    }
+    if (pressDuration) {
+      return press(rect.centerX(), rect.centerY(), pressDuration);
+    }
     return click(rect.centerX(), rect.centerY());
   } else {
     if (uiObj.clickable()) {
@@ -117,6 +132,13 @@ common.clickXy = function(uiObj, clickXy) {
       return arguments.callee(uiObj.parent());
     }
   }
+};
+common.clickXyRect = function(uiObj, range = 10) {
+  if (!uiObj) {
+    return
+  }
+  var rect = uiObj.bounds();
+  return click(rect.centerX() - range, rect.centerY() - range, rect.centerX() + range , rect.centerY() + range);
 };
 common.clickDescAll = function (value) {
   // TODO 有奖励的时候会死循环
@@ -163,46 +185,46 @@ common.textContains = function (value, clickOpt) {
 
 
 // ========== 基于坐标的触摸模拟 ==========
-common.swipeToRight = function () {
+common.swipeToRightRandom = function () {
   // eslint-disable-next-line no-undef
-  swipe(
-    device.width * 0.8 + random(-20, 10),
-    device.height * 0.5 + random(-20, 10),
-    device.width * 0.2 + random(-20, 10),
-    device.height * 0.5 + random(-20, 10),
-    1
+  common.swipeRandom(
+    device.width * 0.7,
+    device.height * 0.55,
+    device.width * 0.3,
+    device.height * 0.55,
+    random(1500, 2000)
   );
 };
-common.swipeToLeft = function () {
+common.swipeToLeftRandom = function () {
   // eslint-disable-next-line no-undef
-  swipe(
-    device.width * 0.2 + random(-20, 10),
-    device.height * 0.5 + random(-20, 10),
-    device.width * 0.8 + random(-20, 10),
-    device.height * 0.5 + random(-20, 10),
-    1
+  common.swipeRandom(
+    device.width * 0.3,
+    device.height * 0.55,
+    device.width * 0.7,
+    device.height * 0.55,
+    random(1500, 2000)
   );
 };
-//短距离测试
-//此代码由飞云脚本圈整理提供（www.feiyunjs.com）
-function bezier_curves(cp, t) {
-  var cx = 3.0 * (cp[1].x - cp[0].x);
-  var bx = 3.0 * (cp[2].x - cp[1].x) - cx;
-  var ax = cp[3].x - cp[0].x - cx - bx;
-  var cy = 3.0 * (cp[1].y - cp[0].y);
-  var by = 3.0 * (cp[2].y - cp[1].y) - cy;
-  var ay = cp[3].y - cp[0].y - cy - by;
-
-  var tSquared = t * t;
-  var tCubed = tSquared * t;
-  var result = {
-    x: 0,
-    y: 0,
-  };
-  result.x = ax * tCubed + bx * tSquared + cx * t + cp[0].x;
-  result.y = ay * tCubed + by * tSquared + cy * t + cp[0].y;
-  return result;
-}
+common.swipeToTopRandom = function () {
+  // eslint-disable-next-line no-undef
+  common.swipeRandom(
+    device.width * 0.55,
+    device.height * 0.8,
+    device.width * 0.55,
+    device.height * 0.4,
+    random(1500, 2000)
+  );
+};
+common.swipeToBottomRandom = function () {
+  // eslint-disable-next-line no-undef
+  common.swipeRandom(
+    device.width * 0.55,
+    device.height * 0.4,
+    device.width * 0.55,
+    device.height * 0.8,
+    random(1500, 2000)
+  );
+};
 //仿真随机带曲线滑动
 //qx, qy, zx, zy, time 代表起点x,起点y,终点x,终点y,过程耗时单位毫秒
 common.swipeRandom = function (qx, qy, zx, zy, time) {
@@ -239,6 +261,24 @@ common.swipeRandom = function (qx, qy, zx, zy, time) {
   //  log(xxy);
   gesture.apply(null, xxy);
 };
+function bezier_curves(cp, t) {
+  var cx = 3.0 * (cp[1].x - cp[0].x);
+  var bx = 3.0 * (cp[2].x - cp[1].x) - cx;
+  var ax = cp[3].x - cp[0].x - cx - bx;
+  var cy = 3.0 * (cp[1].y - cp[0].y);
+  var by = 3.0 * (cp[2].y - cp[1].y) - cy;
+  var ay = cp[3].y - cp[0].y - cy - by;
+
+  var tSquared = t * t;
+  var tCubed = tSquared * t;
+  var result = {
+    x: 0,
+    y: 0,
+  };
+  result.x = ax * tCubed + bx * tSquared + cx * t + cp[0].x;
+  result.y = ay * tCubed + by * tSquared + cy * t + cp[0].y;
+  return result;
+}
 
 
 

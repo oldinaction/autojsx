@@ -12,6 +12,12 @@ var projects = [ //项目数组，放的是每一个要编译的项目，
     compile: true,
     name: "大麦抢票",
     main: "./main.js"
+  },
+  {
+    id: 3,
+    compile: true,
+    name: "闲鱼自动发货",
+    main: "./main.js"
   }
 ]
 
